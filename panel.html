@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucifer Product Editor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-pink: #ff2a6d;
+            --neon-blue: #05d9e8;
+            --neon-purple: #d300c5;
+            --neon-green: #00ff9d;
+            --neon-red: #ff3864;
+            --neon-yellow: #fff700;
+            --dark-bg: #0d0221;
+            --darker-bg: #070114;
+            --card-bg: #1a0933;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--dark-bg);
+            color: #fff;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        h1, h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue), 0 0 20px rgba(5, 217, 232, 0.5);
+            margin-bottom: 20px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .container {
+            display: flex;
+            gap: 30px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        
+        .table-container, .form-container {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(5, 217, 232, 0.2);
+            border: 1px solid var(--neon-blue);
+        }
+        
+        .table-container {
+            flex: 2;
+            overflow-x: auto;
+        }
+        
+        .form-container {
+            flex: 1;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        th {
+            background-color: rgba(5, 217, 232, 0.1);
+            color: var(--neon-green);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8em;
+            letter-spacing: 1px;
+        }
+        
+        tr:hover {
+            background-color: rgba(255, 42, 109, 0.05);
+        }
+        
+        form {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            margin-bottom: 5px;
+            color: var(--neon-green);
+            font-size: 0.9em;
+        }
+        
+        input, textarea, select {
+            padding: 10px 12px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--neon-purple);
+            border-radius: 4px;
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+        
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        button {
+            background-color: var(--neon-pink);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 42, 109, 0.5);
+        }
+        
+        button:hover {
+            background-color: var(--neon-purple);
+            box-shadow: 0 0 20px rgba(211, 0, 197, 0.7);
+        }
+        
+        .edit-btn {
+            background-color: transparent;
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 8px 12px;
+            font-size: 0.8em;
+            box-shadow: 0 0 5px var(--neon-blue);
+            margin-right: 8px;
+        }
+        
+        .edit-btn:hover {
+            background-color: rgba(5, 217, 232, 0.2);
+        }
+        
+        .delete-btn {
+            background-color: transparent;
+            border: 1px solid var(--neon-red);
+            color: var(--neon-red);
+            padding: 8px 12px;
+            font-size: 0.8em;
+            box-shadow: 0 0 5px var(--neon-red);
+        }
+        
+        .delete-btn:hover {
+            background-color: rgba(255, 56, 100, 0.2);
+        }
+        
+        .add-btn {
+            background-color: var(--neon-yellow);
+            color: var(--dark-bg);
+            box-shadow: 0 0 10px var(--neon-yellow);
+        }
+        
+        .add-btn:hover {
+            background-color: var(--neon-yellow);
+            box-shadow: 0 0 20px var(--neon-yellow);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background-color: var(--neon-green);
+            color: var(--dark-bg);
+            border-radius: 4px;
+            box-shadow: 0 0 20px var(--neon-green);
+            font-weight: bold;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .notification.error {
+            background-color: var(--neon-red);
+            box-shadow: 0 0 20px var(--neon-red);
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .scrollable-section {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .scrollable-section::-webkit-scrollbar {
+            width: 5px;
+        }
+        
+        .scrollable-section::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .scrollable-section::-webkit-scrollbar-thumb {
+            background: var(--neon-purple);
+            border-radius: 10px;
+        }
+        
+        .confirm-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(13, 2, 33, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .confirm-dialog.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .confirm-content {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid var(--neon-red);
+            box-shadow: 0 0 20px var(--neon-red);
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .confirm-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .confirm-cancel {
+            background-color: transparent;
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+        }
+        
+        .confirm-delete {
+            background-color: var(--neon-red);
+            box-shadow: 0 0 10px var(--neon-red);
+        }
+        
+        @media (max-width: 1200px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .form-container {
+                position: static;
+                max-height: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Neon Product Editor</h1>
+        <button class="add-btn" id="add-new-btn">Add New Product</button>
+    </div>
+    
+    <div class="container">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Color</th>
+                        <th>Size</th>
+                        <th>Price</th>
+                        <th>MRP</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="product-table">
+                    <tr>
+                        <td colspan="7">Loading products...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="form-container">
+            <h2 id="form-title">Edit Product</h2>
+            <form id="edit-form">
+                <input type="hidden" name="id" id="id">
+                
+                <div class="form-group">
+                    <label for="name">Product Name</label>
+                    <input type="text" name="name" id="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="color">Color</label>
+                    <input type="text" name="color" id="color">
+                </div>
+                
+                <div class="form-group">
+                    <label for="size">Size</label>
+                    <input type="text" name="size" id="size">
+                </div>
+                
+                <div class="form-group">
+                    <label for="storage">Storage</label>
+                    <input type="text" name="storage" id="storage">
+                </div>
+                
+                <div class="form-group">
+                    <label for="selling_price">Selling Price</label>
+                    <input type="text" name="selling_price" id="selling_price" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="mrp">MRP</label>
+                    <input type="text" name="mrp" id="mrp" required>
+                </div>
+                
+                <div class="scrollable-section">
+                    <div class="form-group">
+                        <label for="fetaures">Features (HTML)</label>
+                        <textarea name="fetaures" id="fetaures"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="img1">Image 1 URL</label>
+                        <input type="text" name="img1" id="img1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="img2">Image 2 URL</label>
+                        <input type="text" name="img2" id="img2">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="img3">Image 3 URL</label>
+                        <input type="text" name="img3" id="img3">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="img4">Image 4 URL</label>
+                        <input type="text" name="img4" id="img4">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="img5">Image 5 URL</label>
+                        <input type="text" name="img5" id="img5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="disp_order">Display Order</label>
+                        <input type="number" name="disp_order" id="disp_order">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="from_csv">From CSV</label>
+                        <input type="text" name="from_csv" id="from_csv">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="created_at">Created At</label>
+                        <input type="text" name="created_at" id="created_at">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="md5_id">MD5 ID</label>
+                        <input type="text" name="md5_id" id="md5_id">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="verients">Variants (JSON)</label>
+                        <textarea name="verients" id="verients"></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" id="save-btn">Save Product</button>
+                    <button type="button" id="delete-btn" class="delete-btn" style="margin-top: 10px; width: 100%; display: none;">Delete Product</button>
+                    <button type="button" id="cancel-btn" class="edit-btn" style="margin-top: 10px; width: 100%; display: none;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification"></div>
+    
+    <div class="confirm-dialog" id="confirm-dialog">
+        <div class="confirm-content">
+            <h2>Confirm Deletion</h2>
+            <p id="confirm-message">Are you sure you want to delete this product? This action cannot be undone.</p>
+            <div class="confirm-buttons">
+                <button class="confirm-cancel" id="confirm-cancel">Cancel</button>
+                <button class="confirm-delete" id="confirm-delete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Current product ID for deletion
+        let currentProductId = null;
+        let isNewProduct = false;
+        
+        // Load products
+        function loadProducts() {
+            fetch('edit_products.php?action=get')
+                .then(response => response.json())
+                .then(products => {
+                    const table = document.getElementById('product-table');
+                    table.innerHTML = '';
+                    
+                    if (products.length === 0) {
+                        table.innerHTML = '<tr><td colspan="7">No products found</td></tr>';
+                        return;
+                    }
+                    
+                    products.forEach(product => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${product.id}</td>
+                            <td>${product.name.substring(0, 50)}${product.name.length > 50 ? '...' : ''}</td>
+                            <td>${product.color || '-'}</td>
+                            <td>${product.size || '-'}</td>
+                            <td>${product.selling_price}</td>
+                            <td>${product.mrp}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="edit-btn" onclick="editProduct(${product.id})">Edit</button>
+                                    <button class="delete-btn" onclick="confirmDelete(${product.id}, '${escapeHtml(product.name)}')">Delete</button>
+                                </div>
+                            </td>
+                        `;
+                        table.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading products:', error);
+                    document.getElementById('product-table').innerHTML = 
+                        '<tr><td colspan="7">Error loading products. Please try again.</td></tr>';
+                });
+        }
+        
+        // Escape HTML for safety in confirm message
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+        
+        // Populate form for editing
+        function editProduct(id) {
+            isNewProduct = false;
+            fetch('edit_products.php?action=get')
+                .then(response => response.json())
+                .then(products => {
+                    const product = products.find(p => p.id == id);
+                    if (product) {
+                        for (let key in product) {
+                            const element = document.getElementById(key);
+                            if (element) {
+                                element.value = typeof product[key] === 'object' 
+                                    ? JSON.stringify(product[key]) 
+                                    : product[key] || '';
+                            }
+                        }
+                        
+                        // Show delete and cancel buttons
+                        document.getElementById('delete-btn').style.display = 'block';
+                        document.getElementById('cancel-btn').style.display = 'block';
+                        document.getElementById('delete-btn').onclick = () => confirmDelete(id, product.name);
+                        
+                        // Update form title
+                        document.getElementById('form-title').textContent = 'Edit Product';
+                        
+                        // Scroll to form
+                        document.querySelector('.form-container').scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                        
+                        showNotification('Product loaded for editing');
+                    }
+                });
+        }
+        
+        // Create new product
+        function createNewProduct() {
+            isNewProduct = true;
+            document.getElementById('edit-form').reset();
+            
+            // Generate a temporary ID (will be replaced by server)
+            document.getElementById('id').value = 'new';
+            
+            // Set current date as created_at
+            const now = new Date();
+            document.getElementById('created_at').value = now.toISOString().slice(0, 19).replace('T', ' ');
+            
+            // Generate MD5 ID
+            document.getElementById('md5_id').value = Math.random().toString(36).substring(2) + Date.now().toString(36);
+            
+            // Show cancel button, hide delete button
+            document.getElementById('delete-btn').style.display = 'none';
+            document.getElementById('cancel-btn').style.display = 'block';
+            
+            // Update form title
+            document.getElementById('form-title').textContent = 'Add New Product';
+            
+            // Scroll to form
+            document.querySelector('.form-container').scrollIntoView({
+                behavior: 'smooth'
+            });
+            
+            showNotification('Ready to add new product');
+        }
+        
+        // Cancel editing/creating
+        function cancelEdit() {
+            document.getElementById('edit-form').reset();
+            document.getElementById('delete-btn').style.display = 'none';
+            document.getElementById('cancel-btn').style.display = 'none';
+            document.getElementById('form-title').textContent = 'Edit Product';
+            isNewProduct = false;
+        }
+        
+        // Handle form submission
+        document.getElementById('edit-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            
+            fetch('edit_products.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                showNotification(isNewProduct ? 'Product added successfully!' : 'Product saved successfully!');
+                loadProducts();
+                if (isNewProduct) {
+                    cancelEdit();
+                }
+            })
+            .catch(error => {
+                showNotification('Error saving product', true);
+                console.error('Error:', error);
+            });
+        });
+        
+        // Show delete confirmation dialog
+        function confirmDelete(id, name) {
+            currentProductId = id;
+            document.getElementById('confirm-message').innerHTML = 
+                `Are you sure you want to delete <strong>"${name}"</strong> (ID: ${id})?<br>This action cannot be undone.`;
+            document.getElementById('confirm-dialog').classList.add('show');
+        }
+        
+        // Handle actual deletion
+        function deleteProduct() {
+            if (!currentProductId) return;
+            
+            fetch(`edit_products.php?action=delete&id=${currentProductId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Product deleted successfully!');
+                        loadProducts();
+                        // Clear form if deleting the currently edited product
+                        if (document.getElementById('id').value == currentProductId) {
+                            cancelEdit();
+                        }
+                    } else {
+                        showNotification('Error deleting product: ' + data.message, true);
+                    }
+                })
+                .catch(error => {
+                    showNotification('Error deleting product', true);
+                    console.error('Error:', error);
+                })
+                .finally(() => {
+                    document.getElementById('confirm-dialog').classList.remove('show');
+                    currentProductId = null;
+                });
+        }
+        
+        // Show notification
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('notification');
+            notification.innerHTML = message;
+            notification.className = 'notification' + (isError ? ' error' : '');
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+            
+            // Add new product button
+            document.getElementById('add-new-btn').addEventListener('click', createNewProduct);
+            
+            // Cancel button
+            document.getElementById('cancel-btn').addEventListener('click', cancelEdit);
+            
+            // Confirm delete button
+            document.getElementById('confirm-delete').addEventListener('click', deleteProduct);
+            
+            // Cancel confirmation button
+            document.getElementById('confirm-cancel').addEventListener('click', function() {
+                document.getElementById('confirm-dialog').classList.remove('show');
+                currentProductId = null;
+            });
+        });
+    </script>
+</body>
+</html>
